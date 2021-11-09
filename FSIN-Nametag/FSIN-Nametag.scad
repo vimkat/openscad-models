@@ -28,10 +28,22 @@ Margin = 2;
 /* [Name] */
 
 // Name displayed on the nametag
-Name = "JULIAN";
+Name = "Fachschaf";
 
 // Thickness of the printed name
 Thickness_Name = 0.5;
+
+// Use small caps text style
+Use_Smallcaps = true;
+
+
+/* [Image] */
+
+// Display an additional image on the right
+Additional_Image = false;
+
+// Path to the additional image
+Additional_Image_Path = "";
 
 
 /* [Hidden] */
@@ -42,11 +54,20 @@ logo_size = Height - 4 * Margin;
 text_size = Height - 6 * Margin;
 font = "FiraCode Nerd Font:bold";
 
-echo(logo_size);
-
 ////////////////////////////////////////////////////////////////////////////////
 function substr(data, i, length=0) = (length == 0) ? _substr(data, i, len(data)) : _substr(data, i, length+i);
 function _substr(str, i, j, out="") = (i==j) ? out : str(str[i], _substr(str, i+1, j, out));
+
+function is_lowercase(char) = ord(char) >= ord("a") && ord(char) <= ord("z");
+function to_upper(char) = is_lowercase(char) ? chr(ord(char) - 32) : char;
+
+function offsets(string) = _offsets(string, [0]);
+function _offsets(string, acc) =
+    len(string) == 0
+        ? acc
+        : _offsets(substr(string, 1),
+                   concat(acc,
+                          acc[len(acc)-1] + (is_lowercase(string[0]) ? 0.64 : 0.90)));
 ////////////////////////////////////////////////////////////////////////////////
 
 // The base plate of the nametag
@@ -67,28 +88,36 @@ module base(width, height, thickness, radius) {
 base(Width, Height, Thickness_Base, Roundness);
 
 module smallcaps(Name, text_size, width) {
-    text_width = text_size * 0.9 + (len(Name)-1) * text_size * 0.64;
+    offs = offsets(Name);
+    text_width = offs[len(offs)-1] * text_size;
     x_offset = (width-text_width)/2;
     
     /*
+    // DEBUG: Text alignment helper
     %translate([0,-3,0]) cube([width, 1, 1]);
     %translate([x_offset,-2,0]) cube([text_width, 1, 1]);
     */
     
-    // First letter
-    translate([x_offset, 0, 0])
-    linear_extrude(Thickness_Name)
-        text(Name[0], size=text_size, halign="left", font=font);
+    for (i = [0:len(Name)-1]) {
+        c = Name[i];
 
-    // Rest
-    translate([x_offset + text_size * 0.9, 0, 0])
-    linear_extrude(Thickness_Name)
-        text(substr(Name, 1), size=text_size*0.7, spacing=1.1, halign="left", font=font);
+        translate([x_offset + offs[i] * text_size, 0, 0])
+        linear_extrude(Thickness_Name)
+            text(to_upper(c), size=text_size * (is_lowercase(c) ? 0.7 : 1), spacing=1, halign="left", font=font);
+    }
 }
 
-translate([Margin * 3 + logo_size, Margin * 3, Thickness_Base])
-color("black")
-smallcaps(Name, text_size, Width-logo_size - 5*Margin);
+if (Use_Smallcaps) {
+    translate([Margin * 3 + logo_size, Margin * 3, Thickness_Base])
+    color("black")
+        smallcaps(Name, text_size, Width-logo_size - 5*Margin - (Additional_Image ? logo_size : 0));
+} else {
+    color("black")
+    translate([Width/2 + logo_size/2, Height/2, Thickness_Base])
+    linear_extrude(Thickness_Name)
+        text(Name, size=text_size, halign="center", valign="center", font=font);
+}
+
 
 difference() {
 	translate([0, 0, Thickness_Base])
@@ -102,5 +131,21 @@ difference() {
 translate([Margin * 2, Margin * 2, Thickness_Base])
 color("black")
 linear_extrude(Thickness_Name)
-resize([logo_size, logo_size, Thickness_Base])
+resize([logo_size, logo_size, 0])
 	import(logo);
+
+if (Additional_Image) {
+    translate_vector = [Width - Margin*2-logo_size/2, Margin*2+logo_size/2, Thickness_Base];
+
+    if (Additional_Image_Path == "") {
+        %translate(translate_vector)
+        color("red")
+            cube([logo_size, logo_size, Thickness_Name], center=true);
+    } else {
+        translate(translate_vector)
+        color("black")
+        linear_extrude(Thickness_Name)
+        resize([logo_size, 0, 0], auto=true)
+            import(Additional_Image_Path, center=true);
+    }
+}

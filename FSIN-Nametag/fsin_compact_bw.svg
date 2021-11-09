@@ -6,7 +6,7 @@
    viewBox="0 0 580 580"
    id="svg14"
    sodipodi:docname="fsin_compact_bw.svg"
-   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   inkscape:version="1.1.1 (c3084ef, 2021-09-22)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -27,13 +27,13 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="2.2419459"
-     inkscape:cx="63.560856"
-     inkscape:cy="-54.193993"
-     inkscape:window-width="1702"
-     inkscape:window-height="1394"
-     inkscape:window-x="1728"
-     inkscape:window-y="36"
-     inkscape:window-maximized="1"
+     inkscape:cx="173.28696"
+     inkscape:cy="94.783732"
+     inkscape:window-width="1296"
+     inkscape:window-height="773"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="0"
      inkscape:current-layer="g12"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -45,21 +45,23 @@
      fill="#333333"
      id="g6"
      transform="translate(-10,-10)">
-    <polygon
-       points="300,110 260,110 260,220 300,220 300,300 260,300 260,590 10,590 10,450 130,450 10,330 10,10 300,10 "
-       id="polygon4" />
+    <path
+       id="polygon4"
+       d="m 289.41667,110 h -40 v 110 h 40 v 80 h -40 V 590 H 10 V 450 H 130 L 10,330 V 10 h 279.41667 z"
+       sodipodi:nodetypes="cccccccccccccc" />
   </g>
   <g
      fill="#777777"
      id="g12"
      transform="translate(-10,-10)">
     <path
-       d="M 310,10 H 590 V 110 H 330 c -13.33333,0 -20,-6.66667 -20,-20 z"
+       d="M 320.58333,10 H 590 V 110 H 340.58333 c -13.33333,0 -20,-6.66667 -20,-20 z"
        id="path8"
        sodipodi:nodetypes="cccscc" />
-    <polygon
-       points="590,330 470,450 590,450 590,590 310,590 310,120 590,120 "
-       id="polygon10" />
+    <path
+       id="polygon10"
+       d="M 590,330 470,450 H 590 V 590 H 320.58333 V 130.58333 H 590 Z"
+       sodipodi:nodetypes="cccccccc" />
   </g>
   <!--
     <text x="250" y="580"
