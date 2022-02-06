@@ -2,7 +2,7 @@
 // Map Marker
 // Copyright (C) 2022 Nils Weber
 //
-// Licensed under the MIT License
+// Licensed under CC BY-NC-SA 4.0
 //
 
 /* [Dimensions] */
