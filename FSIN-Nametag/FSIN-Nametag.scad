@@ -58,7 +58,12 @@ font = "FiraCode Nerd Font:bold";
 function substr(data, i, length=0) = (length == 0) ? _substr(data, i, len(data)) : _substr(data, i, length+i);
 function _substr(str, i, j, out="") = (i==j) ? out : str(str[i], _substr(str, i+1, j, out));
 
-function is_lowercase(char) = ord(char) >= ord("a") && ord(char) <= ord("z");
+function is_lowercase(char) =
+	(ord(char) >= ord("a") && ord(char) <= ord("z"))
+	|| char == "ä"
+	|| char == "ö"
+	|| char == "ü";
+
 function to_upper(char) = is_lowercase(char) ? chr(ord(char) - 32) : char;
 
 function offsets(string) = _offsets(string, [0]);
