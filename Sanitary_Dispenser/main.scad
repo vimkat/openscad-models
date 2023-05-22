@@ -55,7 +55,7 @@ pad_length = Pad_Length + Tolerance_Pad_Length;
 pad_depth = Pad_Depth + Tolerance_Pad_Depth;
 pad_height = Pad_Height + Tolerance_Pad_Height;
 
-size = [
+size = [ // inner
 	Radius + tampon_length + Wall_Thickness*3 + pad_length + Radius,
 	pad_depth + 2*Wall_Thickness,
 	tampon_diameter * ceil(1 + Capacity / tampons_per_layer),
@@ -138,7 +138,7 @@ module pad_cutouts() {
 
 module tampon_insides() {
 	// top slope
-	top_slope_width = size.y - Diameter - Tolerance_Tampons_Diameter;
+	top_slope_width = size.y - Diameter * 1.5;
 	multmatrix(shear(-Shear_Factor*1.5))
 	translate([Wall_Thickness, -size.y/2, -Wall_Thickness/2 + tampon_diameter*3.75])
 	cube_rc([Radius + tampon_length + Wall_Thickness, top_slope_width, Wall_Thickness/2], r=corner_radii_2d);
