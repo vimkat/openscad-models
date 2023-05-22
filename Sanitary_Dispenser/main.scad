@@ -23,7 +23,9 @@ Pad_Height = 7;
 
 /* [Dispenser] */
 Capacity = 30; // Number of tampons that should fit into the dispenser
-Size_Grab_Point = 20;
+Size_Grab_Point_Pads = 30;
+Size_Grab_Point_Tampons = 20;
+
 
 // How far should the dispenser stick out from the wall?
 
@@ -35,7 +37,7 @@ Tolerance_Pad_Length = 2;
 Tolerance_Pad_Depth = 2;
 Tolerance_Pad_Height = 1;
 Radius = 5;
-Wall_Thickness = 2;
+Wall_Thickness = 1.6;
 Shear_Factor = 0.3;
 Tampon_SVG_Path = "./tampon.svg";
 Tampon_SVG_Size = [20, 0, 0];
@@ -120,7 +122,7 @@ module pad_cutouts() {
 
 	// bottom opening
 	translate([Wall_Thickness + pad_length/2, -size.y/2 - Wall_Thickness, -0.5])
-	cylinder(d=Size_Grab_Point, h=Wall_Thickness+1);
+	cylinder(d=Size_Grab_Point_Pads, h=Wall_Thickness+1);
 
 	// pad icon
 	translate([
@@ -148,14 +150,17 @@ module tampon_insides() {
 	cube_rc([Radius + tampon_length + Wall_Thickness, size.y, Wall_Thickness/2], r=corner_radii_2d);
 
 	// left guard
-	translate([Wall_Thickness * 3.5, -size.y/2, 0])
+	translate([Wall_Thickness + Radius, -size.y/2, Wall_Thickness * 2])
 	rotate([90, 0, 0])
-	cube_rc([tampon_length * 0.3, tampon_diameter * 1.5, Wall_Thickness], r=[0, 0, Radius, 0]);
+	cube_rc([(tampon_length - Size_Grab_Point_Tampons) / 2, tampon_diameter * 1.5, Wall_Thickness], r=[0, 0, Radius, 0]);
 
 	// right guard
-	translate([tampon_length - tampon_length * 0.3 + Wall_Thickness * 3.5, -size.y/2, 0])
+	translate([Wall_Thickness + Radius + tampon_length - (tampon_length - Size_Grab_Point_Tampons) / 2, -size.y/2, Wall_Thickness * 2])
 	rotate([90, 0, 0])
-	cube_rc([tampon_length * 0.3, tampon_diameter * 1.5, Wall_Thickness], r=[0, 0, 0, Radius]);
+	cube_rc([(tampon_length - Size_Grab_Point_Tampons) / 2, tampon_diameter * 1.5, Wall_Thickness], r=[0, 0, 0, Radius]);
+// 	translate([tampon_length - tampon_length * 0.3 + Wall_Thickness * 4.5, -size.y/2, 0])
+// 	rotate([90, 0, 0])
+// 	cube_rc([tampon_length * 0.3, tampon_diameter * 1.5, Wall_Thickness], r=[0, 0, 0, Radius]);
 }
 
 function shear(f) = [
