@@ -10,6 +10,15 @@ use <../lib/functions.scad>;
 
 // Variables ///////////////////////////////////////////////////////////////////
 
+/* [Export] */
+
+// Part of the model that should be rendered in the export
+Part = "Body"; // ["Body", "Lid"]
+
+// Generate custom supports
+Supports = true;
+
+
 /* [Tampons] */
 Diameter = 15;
 Length = 50;
@@ -67,6 +76,8 @@ r_mode = ["Z", "Z", "", "", "Z", "Z", "", ""];
 
 tampon_opening_height = tampon_diameter * 4;
 pad_opening_height = pad_height * 1.5;
+guard_width = (tampon_length - Size_Grab_Point_Tampons) / 2 + Wall_Thickness;
+guard_height = tampon_diameter * 1.5;
 
 // Modules /////////////////////////////////////////////////////////////////////
 
@@ -97,6 +108,7 @@ module base() {
 
 
 module tampon_cutouts() {
+	// front opening
 	translate([0, Wall_Thickness/2 - size.y/2, Wall_Thickness*2])
 	rotate([90, 0, 0])
 	linear_extrude(Wall_Thickness*2)
@@ -150,19 +162,31 @@ module tampon_insides() {
 	translate([0, 0, Wall_Thickness])
 	cube_rc([Radius + tampon_length + Wall_Thickness, size.y, Wall_Thickness/2], r=corner_radii_2d);
 
-	guard_width = (tampon_length - Size_Grab_Point_Tampons) / 2 + Wall_Thickness;
 	// left guard
 	translate([Radius, -size.y/2, Wall_Thickness * 2])
 	rotate([90, 0, 0])
-	cube_rc([guard_width, tampon_diameter * 1.5, Wall_Thickness], r=[0, 0, Radius, 0]);
+	cube_rc([guard_width, guard_height, Wall_Thickness], r=[0, 0, Radius, 0]);
 
 	// right guard
 	translate([Wall_Thickness + Radius + tampon_length - (tampon_length - Size_Grab_Point_Tampons) / 2, -size.y/2, Wall_Thickness * 2])
 	rotate([90, 0, 0])
-	cube_rc([guard_width, tampon_diameter * 1.5, Wall_Thickness], r=[0, 0, 0, Radius]);
+	cube_rc([guard_width, guard_height, Wall_Thickness], r=[0, 0, 0, Radius]);
 }
 
 module supports() {
+	// Tampon opening
+	module tampon_support_beam() {
+		translate([Wall_Thickness/2 + Radius + tampon_length/2, -size.y/2 - Wall_Thickness/2, guard_height + Wall_Thickness*2])
+		cylinder(h=tampon_opening_height - guard_height, d=Wall_Thickness);
+	}
+
+	translate([Size_Grab_Point_Tampons/2 + Radius, 0, 0])
+	tampon_support_beam();
+
+	translate([-Size_Grab_Point_Tampons/2 - Radius, 0, 0])
+	tampon_support_beam();
+
+	// Pad opening
 	module pad_support_beam() {
 		translate([size.x - Radius + Wall_Thickness - pad_length/2, -size.y/2 - Wall_Thickness/2, Wall_Thickness])
 		cylinder(h=pad_opening_height, d=Wall_Thickness);
@@ -175,6 +199,23 @@ module supports() {
 	pad_support_beam();
 }
 
+module body() {
+	difference() {
+		base();
+
+		translate([Radius, 0, 0])
+		tampon_cutouts();
+
+		translate([size.x - Radius - pad_length, 0, 0])
+		pad_cutouts();
+	}
+
+	tampon_insides();
+	if (Supports) supports();
+}
+
+// Functions ///////////////////////////////////////////////////////////////////
+
 function shear(f) = [
 	[1, 0, 0, 0],
 	[0, 1, 0, 0],
@@ -184,16 +225,4 @@ function shear(f) = [
 
 // Rendering ///////////////////////////////////////////////////////////////////
 
-difference() {
-	base();
-
-	translate([Radius, 0, 0])
-	tampon_cutouts();
-
-	translate([size.x - Radius - pad_length, 0, 0])
-	pad_cutouts();
-}
-
-tampon_insides();
-supports();
-
+if (Part == "Body") body();
