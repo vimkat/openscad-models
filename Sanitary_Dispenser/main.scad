@@ -45,6 +45,7 @@ Tolerance_Tampons_Length = 1;
 Tolerance_Pad_Length = 2;
 Tolerance_Pad_Depth = 2;
 Tolerance_Pad_Height = 1;
+Tolerance_Lid = 0.5;
 Radius = 5;
 Wall_Thickness = 1.6;
 Shear_Factor = 0.3;
@@ -75,7 +76,15 @@ corner_radii_3d = [Radius, Radius, 0, 0, Radius, Radius, 0, 0];
 r_mode = ["Z", "Z", "", "", "Z", "Z", "", ""];
 
 tampon_opening_height = tampon_diameter * 4;
+tampon_compartment_size_2d = [
+	Wall_Thickness + Radius + tampon_length,
+	size.y,
+];
 pad_opening_height = pad_height * 1.5;
+pad_compartment_size_2d = [
+	size.x - tampon_compartment_size_2d.x - Wall_Thickness,
+	size.y,
+];
 guard_width = (tampon_length - Size_Grab_Point_Tampons) / 2 + Wall_Thickness;
 guard_height = tampon_diameter * 1.5;
 
@@ -214,6 +223,31 @@ module body() {
 	if (Supports) supports();
 }
 
+module lid() {
+		module lid_inside() {
+			translate([-tampon_length - Wall_Thickness, 0])
+			rect_r(tampon_compartment_size_2d - mk2d(Tolerance_Lid*2), r=corner_radii_2d, center=true);
+
+			translate([tampon_length/2 + Wall_Thickness*2.5, 0])
+			mirror([1, 0, 0])
+			rect_r(pad_compartment_size_2d - mk2d(Tolerance_Lid*2), r=corner_radii_2d, center=true);
+		}
+
+	rotate([0, 180, 180])
+	union() {
+		linear_extrude(Wall_Thickness)
+		rect_r(size + mk2d(Wall_Thickness*2), r=[Radius, Radius, 0, 0], center=true);
+
+		color("tomato")
+		translate([0, 0, -Wall_Thickness])
+		linear_extrude(Wall_Thickness)
+		difference() {
+			lid_inside();
+			offset(-Wall_Thickness) lid_inside();
+		}
+	}
+}
+
 // Functions ///////////////////////////////////////////////////////////////////
 
 function shear(f) = [
@@ -226,3 +260,4 @@ function shear(f) = [
 // Rendering ///////////////////////////////////////////////////////////////////
 
 if (Part == "Body") body();
+if (Part == "Lid") lid();
