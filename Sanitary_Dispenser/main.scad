@@ -185,11 +185,11 @@ module tampon_insides() {
 module supports() {
 	// Tampon opening
 	module tampon_support_beam() {
-		translate([Wall_Thickness/2 + Radius + tampon_length/2, -size.y/2 - Wall_Thickness/2, guard_height + Wall_Thickness*2])
-		cylinder(h=tampon_opening_height - guard_height, d=Wall_Thickness);
+		translate([Wall_Thickness/2 + Radius + tampon_length/2, -size.y/2 - Wall_Thickness/2, guard_height + Wall_Thickness*1])
+		cylinder(h=tampon_opening_height - guard_height + Wall_Thickness, d=Wall_Thickness);
 	}
 
-	translate([Size_Grab_Point_Tampons/2 + Radius, 0, 0])
+	translate([Size_Grab_Point_Tampons/2 + Radius + Wall_Thickness, 0, 0])
 	tampon_support_beam();
 
 	translate([-Size_Grab_Point_Tampons/2 - Radius, 0, 0])
