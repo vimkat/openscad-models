@@ -86,7 +86,7 @@ pad_compartment_size_2d = [
 	size.y,
 ];
 guard_width = (tampon_length - Size_Grab_Point_Tampons) / 2 + Wall_Thickness;
-guard_height = tampon_diameter * 1.5;
+guard_height = tampon_diameter * 2;
 
 // Modules /////////////////////////////////////////////////////////////////////
 
@@ -160,7 +160,7 @@ module pad_cutouts() {
 
 module tampon_insides() {
 	// top slope
-	top_slope_width = size.y - Diameter * 1.5;
+	top_slope_width = size.y - Diameter * 1.25;
 	multmatrix(shear(-Shear_Factor*1.5))
 	translate([Wall_Thickness, -size.y/2, -Wall_Thickness/2 + tampon_diameter*3.75])
 	cube_rc([Radius + tampon_length + Wall_Thickness, top_slope_width, Wall_Thickness/2], r=corner_radii_2d);
@@ -220,7 +220,7 @@ module body() {
 	}
 
 	tampon_insides();
-	if (Supports) supports();
+	if (Supports) color("lightblue") supports();
 }
 
 module lid() {
@@ -239,8 +239,8 @@ module lid() {
 		rect_r(size + mk2d(Wall_Thickness*2), r=[Radius, Radius, 0, 0], center=true);
 
 		color("tomato")
-		translate([0, 0, -Wall_Thickness])
-		linear_extrude(Wall_Thickness)
+		translate([0, 0, -Wall_Thickness*2])
+		linear_extrude(Wall_Thickness*2)
 		difference() {
 			lid_inside();
 			offset(-Wall_Thickness) lid_inside();
